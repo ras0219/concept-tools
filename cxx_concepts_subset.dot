@@ -1,0 +1,43 @@
+digraph {
+  weak_input_iterator1 [label="Weak_input_iterator{I}"];
+  input_iterator1 [label="Input_iterator{I}"];
+  output_iterator1 [label="Output_iterator{I}"];
+  forward_iterator1 [label="Forward_iterator{I}"];
+  bidirectional_iterator1 [label="Bidirectional_iterator{I}"];
+  readable1 [label="Readable{I}"];
+  writable1 [label="Writable{I, T}"];
+  permutable1 [label="Permutable{I}"];
+  equality_comparable1 [label="Equality_comparable{T}"];
+  function1 [label="Function{F}"];
+  function2 [label="Function{F, T}"];
+  function3 [label="Function{F, T1, T2}"];
+  predicate1 [label="Predicate{I}"];
+  predicate2 [label="Predicate{I, T}"];
+  predicate3 [label="Predicate{I, T1, T2}"];
+  relation2 [label="Relation{I, T}"];
+  relation3 [label="Relation{I, T1, T2}"];
+
+  sortable1 [label="Sortable{I}"];
+
+  readable1 -> permutable1;
+  writable1 -> permutable1 [label="T = Value_type(I)"];
+
+  writable1 -> output_iterator1;
+
+  readable1 -> weak_input_iterator1;
+
+  equality_comparable1 -> input_iterator1 [label="T = I"];
+  weak_input_iterator1 -> input_iterator1;
+
+  input_iterator1 -> forward_iterator1;
+
+  forward_iterator1 -> bidirectional_iterator1;
+
+  function1 -> predicate1;
+  function2 -> predicate2;
+  function3 -> predicate3;
+  predicate3 -> relation2;
+  predicate3 -> relation3;
+
+  permutable1 -> sortable1;
+}

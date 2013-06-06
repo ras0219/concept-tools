@@ -1,0 +1,649 @@
+digraph {
+  graph [aspect=1.0];
+
+  For_each2 [label=<For_each{I, F}<br/>
+    requires Input_iterator(I)<br/>
+    and Function(F, Value_type(I))<br/>
+    <br/>
+    F for_each(I, I, F);
+  >,shape=none];
+
+  Indirect_query2 [label=<Indirect_query{I, P}<br/>
+    requires For_each(I, P)<br/>
+    and Predicate(P, Value_type(I))<br/>
+    <br/>
+    bool all_of(I, I, P);<br/>
+    bool any_of(I, I, P);<br/>
+    bool none_of(I, I, P);<br/>
+    I find_if(I, I, P);<br/>
+    I find_if_not(I, I, P);<br/>
+    Difference_type(I) count_if(I, I, P);
+    bool is_partitioned(I, I, P);
+  >,shape=none];
+
+  Indirect_forward_query2 [label=<Indirect_forward_query{I, P}<br/>
+    requires Indirect_query(I, P)<br/>
+    and Forward_iterator(I)<br/>
+    <br/>
+    I partition_point(I, I, P);
+  >,shape=none];
+
+  Indirect_permutable_query2 [label=<Indirect_permutable_query{I, P}<br/>
+    requires Indirect_forward_query(I, P)<br/>
+    and Permutable(I, P)<br/>
+    <br/>
+    I remove_if(I, I, P);<br/>
+    I partition(I, I, P);<br/>
+    I stable_partition(I, I, P);
+  >,shape=none];
+
+  Indirect_match2 [label=<Indirect_match{I, T}<br/>
+    requires Input_iterator(I)<br/>
+    and Equality_comparable(Value_type(I), T)<br/>
+    <br/>
+    I find(I, I, const T ref);<br/>
+    Difference_type(I) count(I, I, const T ref);
+  >,shape=none];
+
+  Indirect_forward_match2 [label=<Indirect_forward_match{I, T}<br/>
+    requires Indirect_match(I, T)<br/>
+    and Forward_iterator(I)<br/>
+    <br/>
+    I search_n(I, I, Difference_type(I), const T ref);
+  >,shape=none];
+
+  Indirect_ordered_match2 [label=<Indirect_ordered_match{I, T}<br/>
+    requires Indirect_forward_match(I, T)<br/>
+    and Totally_ordered(Value_type(I), T)<br/>
+    <br/>
+    I lower_bound(I, I, const T ref);<br/>
+    I upper_bound(I, I, const T ref);<br/>
+    pair(I, I) equal_range(I, I, const T ref);<br/>
+    bool binary_search(I, I, const T ref);
+  >,shape=none];
+
+  Indirect_permutable_match2 [label=<Indirect_permutable_match{I, T}<br/>
+    requires Indirect_forward_match(I, T)<br/>
+    and Permutable(I)<br/>
+    <br/>
+    I remove(I, I, T);
+  >,shape=none];
+
+  Indirect_replace_match2 [label=<Indirect_replace_match{I, T}<br/>
+    requires Indirect_match(I, T)<br/>
+    and Output_iterator(I, T)<br/>
+    <br/>
+    I replace(I, I, T, T);
+  >,shape=none];
+
+  Indirect_match3 [label=<Indirect_match{I, T, P}<br/>
+    requires Input_iterator(I)<br/>
+    and Predicate(P, Value_type(I), T)<br/>
+    <br/>
+    /* Here lies potential for<br/>
+    predicate-based find and count */
+  >,shape=none];
+
+  Indirect_forward_match3 [label=<Indirect_forward_match{I, T, P}<br/>
+    requires Indirect_match(I, T, P)<br/>
+    and Forward_iterator(I)<br/>
+    <br/>
+    I search_n(I, I, Difference_type(I), const T ref, P);
+  >,shape=none];
+
+  Indirect_relation_match3 [label=<Indirect_relation_match{I, T, P}<br/>
+    requires Indirect_forward_match(I, T, P)<br/>
+    and Relation(P, Value_type(I), T)<br/>
+    <br/>
+    I lower_bound(I, I, const T ref, P);<br/>
+    I upper_bound(I, I, const T ref, P);<br/>
+    pair(I, I) equal_range(I, I, const T ref, P);<br/>
+    bool binary_search(I, I, const T ref, P);
+  >,shape=none];
+
+  Indirect_comparison2 [label=<Indirect_comparison{I1, I2}<br/>
+    requires Indirect_match(I1, Value_type(I2))<br/>
+    and Indirect_range_swap(I1, I2)<br/>
+    <br/>
+    pair(I1, I2) mismatch(I1, I1, I2);<br/>
+    bool equal(I1, I1, I2);
+  >,shape=none];
+
+  Indirect_ordered_comparison2 [label=<Indirect_ordered_comparison{I1, I2}<br/>
+    requires Indirect_comparison(I1, I2)<br/>
+    and Totally_ordered(Value_type(I1), Value_type(I2))<br/>
+    <br/>
+    bool includes(I1, I1, I2, I2);<br/>
+    bool lexicographical_compare(I1, I1, I2, I2);
+  >,shape=none];
+
+  Indirect_weak_forward_comparison2 [label=<Indirect_weak_forward_comparison{I1, I2}<br/>
+    requires Indirect_comparison(I1, I2)<br/>
+    and Forward_iterator(I2)<br/>
+    <br/>
+    I1 find_first_of(I1, I1, I2, I2);
+  >,shape=none];
+
+  Indirect_strong_forward_comparison2 [label=<Indirect_strong_forward_comparison{I1, I2}<br/>
+    requires Indirect_weak_forward_comparison(I1, I2)<br/>
+    and Forward_iterator(I1)<br/>
+    <br/>
+    I1 search(I1 first1, I1 last1, first2, I2 last2);<br/>
+    bool is_permutation(I1, I1, I2);
+  >,shape=none];
+
+  Indirect_comparison3 [label=<Indirect_comparison{I1, I2, P}<br/>
+    requires Indirect_match(I1, Value_type(I2), P)<br/>
+    and Indirect_range_swap(I1, I2)<br/>
+    <br/>
+    I1 search(I1, I1, I2, I2, P);
+  >,shape=none];
+
+  Indirect_relation_comparison3 [label=<Indirect_relation_comparison{I1, I2, P}<br/>
+    requires Indirect_comparison(I1, I2, P)<br/>
+    and Relation(P, Value_type(I1), Value_type(I2))<br/>
+    <br/>
+    pair(I1, I2) mismatch(I1, I1, I2, P);<br/>
+    bool equal(I1, I1, I2, P);
+  >,shape=none];
+
+  Indirect_ordered_comparison3 [label=<Indirect_ordered_comparison{I1, I2, P}<br/>
+    requires Indirect_relation_comparison(I1, I2, P)<br/>
+    and Strict_weak_order(P, Value_type(I1), Value_type(I2))<br/>
+    <br/>
+    bool includes(I1, I1, I2, I2, P);<br/>
+    bool lexicographical_compare(I1, I1, I2, I2, P);
+  >,shape=none];
+
+  Indirect_weak_forward_comparison3 [label=<Indirect_weak_forward_comparison{I1, I2, P}<br/>
+    requires Indirect_relation_comparison(I1, I2, P)<br/>
+    and Forward_iterator(I2)<br/>
+    <br/>
+    I1 find_first_of(I1, I1, I2, I2, P);
+  >,shape=none];
+
+  Indirect_strong_forward_comparison3 [label=<Indirect_strong_forward_comparison{I1, I2, P}<br/>
+    requires Indirect_weak_forward_comparison(I1, I2, P)<br/>
+    and Indirect_forward_match(I1, Value_type(I2), P)<br/>
+    <br/>
+    bool is_permutation(I1, I1, I2, P);
+  >,shape=none];
+
+  Indirect_cross_comparison1 [label=<Indirect_cross_comparison{I}<br/>
+    requires Indirect_forward_match(I, Value_type(I))<br/>
+    <br/>
+    I adjacent_find(I, I);
+  >,shape=none];
+  
+  Indirect_ordered_cross_comparison1 [label=<Indirect_ordered_cross_comparison{I}<br/>
+    requires Indirect_ordered_match(I, Value_type(I))<br/>
+    <br/>
+    bool is_sorted(I, I);<br/>
+    I is_sorted_until(I, I);<br/>
+    bool is_heap(I, I);<br/>
+    I is_heap_until(I, I);<br/>
+    I min_element(I, I);<br/>
+    I max_element(I, I);<br/>
+    pair(I, I) minmax_element(I, I);
+  >,shape=none];
+
+  Indirect_permutable_cross_comparison1 [label=<Indirect_permutable_cross_comparison{I}<br/>
+    requires Indirect_permutable_match(I, Value_type(I))<br/>
+    <br/>
+    void unique(I, I);
+  >,shape=none];
+
+  Indirect_cross_comparison2 [label=<Indirect_cross_comparison{I, R}<br/>
+    requires Forward_iterator(I)<br/>
+    and Relation(R, Value_type(I))<br/>
+    <br/>
+    I adjacent_find(I, I R);
+  >,shape=none];
+  
+  Indirect_ordered_cross_comparison2 [label=<Indirect_ordered_cross_comparison{I, R}<br/>
+    requires Indirect_cross_comparison(I, R)<br/>
+    and Strict_weak_order(R, Value_type(I))<br/>
+    <br/>
+    bool is_sorted(I first, I last, R comp);<br/>
+    I is_sorted_until(I, I, R);<br/>
+    bool is_heap(I, I, R);<br/>
+    I is_heap_until(I, I, R);<br/>
+    I min_element(I, I, R);<br/>
+    I max_element(I, I, R);<br/>
+    pair(I, I) minmax_element(I, I, R);
+  >,shape=none];
+
+  Indirect_permutable_cross_comparison2 [label=<Indirect_permutable_cross_comparison{I, R}<br/>
+    requires Indirect_cross_comparison(I, R)<br/>
+    and Permutable(I)<br/>
+    <br/>
+    void unique(I, I, R);
+  >,shape=none];
+
+  Indirect_copy2 [label=<Indirect_copy{I, O}<br/>
+    requires Input_iterator(I)<br/>
+    and Output_iterator(O, const Value_type(I) ref)<br/>
+    <br/>
+    O copy(I, I, O);<br/>
+    O copy_n(I, Difference_type(I), O);
+  >,shape=none];
+
+  Indirect_forward_copy2 [label=<Indirect_forward_copy{I, O}<br/>
+    requires Indirect_copy(I, O)<br/>
+    and Forward_iterator(I)<br/>
+    <br/>
+    void rotate_copy(I, I, I, O);
+  >,shape=none];
+
+  Indirect_bidirectional_copy2 [label=<Indirect_bidirectional_copy{I, O}<br/>
+    requires Indirect_forward_copy(I, O)<br/>
+    and Bidirectional_iterator(I)<br/>
+    <br/>
+    void reverse_copy(I, I, O);
+  >,shape=none];
+
+  Indirect_strong_bidirectional_copy2 [label=<Indirect_strong_bidirectional_copy{I, O}<br/>
+    requires Indirect_bidirectional_copy(I, O)<br/>
+    and Bidirectional_iterator(O)<br/>
+    <br/>
+    void copy_backward(I, I, O);
+  >,shape=none];
+
+  Indirect_unique_copy2 [label=<Indirect_unique_copy{I, O}<br/>
+    requires Indirect_copy(I, O)<br/>
+    and Equality_comparable(Value_type(I))<br/>
+    and Copyable(Value_type(I))<br/>
+    <br/>
+    O unique_copy(I, I, O);
+  >,shape=none];
+
+  Indirect_copy_query3 [label=<Indirect_copy_query{I, O, P}<br/>
+    requires Indirect_copy(I, O)<br/>
+    and Indirect_query(I, P)<br/>
+    <br/>
+    O copy_if(I, I, O, P);<br/>
+    O remove_copy_if(I, I, O, P);
+  >,shape=none];
+
+  Indirect_copy_match3 [label=<Indirect_copy_match{I, O, T}<br/>
+    requires Indirect_copy(I, O)<br/>
+    and Indirect_match(I, T)<br/>
+    <br/>
+    O remove_copy(I, I, O, T);
+  >,shape=none];
+
+  Indirect_unique_copy3 [label=<Indirect_unique_copy{I, O, R}<br/>
+    requires Indirect_copy(I, O)<br/>
+    and Relation(R, Value_type(I))<br/>
+    and Copyable(Value_type(I))<br/>
+    <br/>
+    unique_copy(I, I, O, R)
+  >,shape=none];
+
+  Indirect_move2 [label=<Indirect_move{I, O}<br/>
+    requires Input_iterator(I)<br/>
+    and Output_iterator(I, Value_type(I) lvalue ref)<br/>
+    <br/>
+    O move(I, I, O);
+  >,shape=none];
+
+  Indirect_strong_bidirectional_move2 [label=<Indirect_strong_bidirectional_move{I, O}<br/>
+    requires Indirect_move(I, O)<br/>
+    and Bidirectional_iterator(I)<br/>
+    and Bidirectional_iterator(O)<br/>
+    <br/>
+    O move_backward(I, I, O);
+  >,shape=none];
+
+  Movable1 [label=<Movable{T}<br/>
+    void swap(T lvalue ref, T lvalue ref);
+  >,shape=none];
+
+  Indirect_swap2 [label=<Indirect_swap{I1, I2}<br/>
+    requires Readable(I1, I2)<br/>
+    <br/>
+    void iter_swap(I1, I2);
+  >,shape=none];
+
+  Indirect_range_swap2 [label=<Indirect_range_swap{I1, I2}<br/>
+    requires Indirect_swap(I1, I2)<br/>
+    and Input_iterator(I1)<br/>
+    and Weak_input_iterator(I2)<br/>
+    <br/>
+    void swap_ranges(I1, I1, I2);
+  >,shape=none];
+
+  Indirect_transform3 [label=<Indirect_transform{I, O, F}<br/>
+    O transform(I, I, O, F);
+  >,shape=none];
+
+  Indirect_transform4 [label=<Indirect_transform{I1, I2, O, F}<br/>
+    O transform(I1, I1, I2, O, F);
+  >,shape=none];
+
+  Output_iterator2 [label=<Output_iterator{O, T}<br/>
+    O fill_n(O, Difference_type(T), T);
+  >,shape=none];
+
+  Indirect_range_fill2 [label=<Indirect_range_fill{O, T}<br/>
+    requires Indirect_fill(O, T)<br/>
+    and Equality_comparable(O)<br/>
+    <br/>
+    void fill(O, O, T);
+  >,shape=none];
+
+  Indirect_increment_fill2 [label=<Indirect_increment_fill{O, T}<br/>
+    requires Indirect_range_fill(O, T)<br/>
+    and Weakly_incrementable(T)<br/>
+    <br/>
+    void iota(O, O, T);
+  >,shape=none];
+
+  Indirect_generate2 [label=<Indirect_generate{O, F}<br/>
+    requires Output_iterator(O, Result_of(F))<br/>
+    and Function(F)<br/>
+    <br/>
+    O generate_n(O, Difference_type(T), F);
+  >,shape=none];
+
+  Indirect_range_generate2 [label=<Indirect_range_generate{O, F}<br/>
+    requires Indirect_generate(O, F)<br/>
+    and Equality_comparable(O)<br/>
+    <br/>
+    F generate(O, O, F);
+  >,shape=none];
+
+  Permutable1 [label=<Permutable{I}<br/>
+    void rotate(I, I, I);
+  >,shape=none];
+
+  Permutable_bidirectional1 [label=<Permutable_bidirectional{I}<br/>
+    requires Permutable(I)<br/>
+    and Bidirectional_iterator(I)<br/>
+    <br/>
+    void reverse(I, I);
+  >,shape=none];
+
+  Permutable_random_access1 [label=<Permutable_random_access{I}<br/>
+    requires Permutable_bidirectional(I)<br/>
+    and Random_access_iterator(I)<br/>
+    <br/>
+    void random_shuffle(I, I);
+  >,shape=none];
+
+  Random_permutation2 [label=<Random_permutation{I, G}<br/>
+    requires Permutable_random_access(I)<br/>
+    and Random_number_generator(G, Difference_type(I))<br/>
+    <br/>
+    void random_shuffle(I, I, G);
+  >,shape=none];
+
+  Uniform_random_permutation2 [label=<Uniform_random_permutation{I, G}<br/>
+    requires Permutable_random_access(I)<br/>
+    and Uniform_random_number_generator(G)<br/>
+    <br/>
+    void shuffle(I, I, G);
+  >,shape=none];
+
+  Indirect_partition_copy4 [label=<Indirect_partition_copy{I, O1, I2, P}<br/>
+    requires Indirect_copy(I, O1)<br/>
+    and Indirect_copy(I, O2)<br/>
+    and Indirect_query(I, P)<br/>
+    <br/>
+    pair(O1, O2) partition_copy(I, I, O1, O2, P);
+  >,shape=none];
+
+  Sortable1 [label=<Sortable{I}<br/>
+    requires Permutable(I)<br/>
+    and Totally_ordered(Value_type(I))<br/>
+    <br/>
+    void sort(I, I);<br/>
+    void stable_sort(I, I);<br/>
+    void inplace_merge(I, I, I);
+  >,shape=none];
+
+  Bidirectional_sortable1 [label=<Bidirectional_sortable{I}<br/>
+    requires Sortable(I)<br/>
+    and Bidirectional_iterator(I)<br/>
+    <br/>
+    bool next_permutation(I, I);<br/>
+    bool prev_permutation(I, I);
+  >,shape=none];
+
+  Random_access_sortable1 [label=<Random_access_sortable{I}<br/>
+    requires Bidirectional_sortable(I)<br/>
+    and Random_access_iterator(I)<br/>
+    <br/>
+    void partial_sort(I, I, I);<br/>
+    void nth_element(I, I, I);<br/>
+    void push_heap(I, I);<br/>
+    void pop_heap(I, I);<br/>
+    void make_heap(I, I);<br/>
+    void sort_heap(I, I);
+  >,shape=none];
+
+  Sortable2 [label=<Sortable{I, R}<br/>
+    requires Permutable(I)<br/>
+    and Ordering(Value_type(I), R)<br/>
+    <br/>
+    void sort(I, I, R);<br/>
+    void stable_sort(I, I, R);<br/>
+    void inplace_merge(I, I, I, R);
+  >,shape=none];
+
+  Bidirectional_sortable2 [label=<Bidirectional_sortable{I, R}<br/>
+    requires Sortable(I, R)<br/>
+    and Bidirectional_iterator(I)<br/>
+    <br/>
+    bool next_permutation(I, I, R);<br/>
+    bool prev_permutation(I, I, R);
+  >,shape=none];
+
+  Random_access_sortable2 [label=<Random_access_sortable{I, R}<br/>
+    requires Bidirectional_sortable(I, R)<br/>
+    and Random_access_iterator(I)<br/>
+    <br/>
+    void partial_sort(I, I, I, R);<br/>
+    void nth_element(I, I, I, R);<br/>
+    void push_heap(I, I, R);<br/>
+    void pop_heap(I, I, R);<br/>
+    void make_heap(I, I, R);<br/>
+    void sort_heap(I, I, R);
+  >,shape=none];
+
+  Partial_sortable2 [label=<Partial_sortable{I1, I2}<br/>
+    requires Indirect_copy(I1, I2)<br/>
+    and Random_access_sortable(I2)<br/>
+    <br/>
+    I2 partial_sort_copy(I1, I1, I2, I2);
+  >,shape=none];
+
+  Partial_sortable3 [label=<Partial_sortable{I1, I2, R}<br/>
+    requires Indirect_copy(I1, I2)<br/>
+    and Random_access_sortable(I2, R)<br/>
+    <br/>
+    I2 partial_sort_copy(I1, I1, I2, I2, R);
+  >,shape=none];
+
+  Mergable3 [label=<Mergable{I1, I2, O}<br/>
+    requires Indirect_copy(I1, O)<br/>
+    and Indirect_copy(I2, O)<br/>
+    and Totally_ordered(Value_type(I1), Value_type(I2))<br/>
+    <br/>
+    O merge(I1, I1, I2, I2, O);<br/>
+    O set_union(I1, I1, I2, I2, O);<br/>
+    O set_intersection(I1, I1, I2, I2, O);<br/>
+    O set_difference(I1, I1, I2, I2, O);<br/>
+    O set_symmetric_difference(I1, I1, I2, I2, O);
+  >,shape=none];
+
+  Mergable4 [label=<Mergable{I1, I2, O, R}<br/>
+    requires Indirect_copy(I1, O)<br/>
+    and Indirect_copy(I2, O)<br/>
+    and Relation(R, Value_type(I1), Value_type(I2))<br/>
+    <br/>
+    O merge(I1, I1, I2, I2, O, R);<br/>
+    O set_union(I1, I1, I2, I2, O, R);<br/>
+    O set_intersection(I1, I1, I2, I2, O, R);<br/>
+    O set_difference(I1, I1, I2, I2, O, R);<br/>
+    O set_symmetric_difference(I1, I1, I2, I2, O, R);
+  >,shape=none];
+
+  Totally_ordered1 [label=<Totally_ordered{T}<br/>
+    const T ref min(const T ref, const T ref);<br/>
+    const T ref max(const T ref, const T ref);<br/>
+    pair(const T ref, const T ref) minmax(const T ref, const T ref);<br/>
+    <br/>
+    const T ref min(initializer_list(T));<br/>
+    const T ref max(initializer_list(T));<br/>
+    pair(const T ref, const T ref) minmax(initializer_list(T));
+  >,shape=none];
+
+  Ordering2 [label=<Ordering{T, R}<br/>
+    requires Relation(R, T)<br/>
+    <br/>
+    const T ref min(const T ref, const T ref, R);<br/>
+    const T ref max(const T ref, const T ref, R);<br/>
+    pair(const T ref, const T ref) minmax(const T ref, const T ref, R);<br/>
+    <br/>
+    const T ref min(initializer_list(T), R);<br/>
+    const T ref max(initializer_list(T), R);<br/>
+    pair(const T ref, const T ref) minmax(initializer_list(T), R);
+  >,shape=none];
+
+
+  For_each2 -> Indirect_query2;
+
+  Indirect_query2 -> Indirect_forward_query2;
+
+  Indirect_forward_query2 -> Indirect_permutable_query2;
+  Permutable1 -> Indirect_permutable_query2;
+
+  Indirect_match2 -> Indirect_forward_match2;
+
+  Indirect_forward_match2 -> Indirect_ordered_match2;
+
+  Indirect_forward_match2 -> Indirect_permutable_match2;
+  Permutable1 -> Indirect_permutable_match2;
+
+  Indirect_match2 -> Indirect_replace_match2;
+  Output_iterator2 -> Indirect_replace_match2;
+
+  Indirect_match3 -> Indirect_forward_match3;
+
+  Indirect_forward_match3 -> Indirect_relation_match3;
+
+  Indirect_match2 -> Indirect_comparison2;
+  Indirect_range_swap2 -> Indirect_comparison2;
+
+  Indirect_comparison2 -> Indirect_ordered_comparison2;
+
+  Indirect_comparison2 -> Indirect_weak_forward_comparison2;
+
+  Indirect_weak_forward_comparison2 -> Indirect_strong_forward_comparison2;
+
+  Indirect_match3 -> Indirect_comparison3;
+  Indirect_range_swap2 -> Indirect_comparison3;
+
+  Indirect_comparison3 -> Indirect_relation_comparison3;
+
+  Indirect_relation_comparison3 -> Indirect_ordered_comparison3;
+
+  Indirect_comparison3 -> Indirect_weak_forward_comparison3;
+
+  Indirect_weak_forward_comparison3 -> Indirect_strong_forward_comparison3;
+
+  Indirect_forward_match2 -> Indirect_cross_comparison1;
+
+  Indirect_cross_comparison1 -> Indirect_ordered_cross_comparison1;
+  Indirect_ordered_match2 -> Indirect_ordered_cross_comparison1;
+
+  Indirect_cross_comparison1 -> Indirect_permutable_cross_comparison1;
+  Indirect_permutable_match2 -> Indirect_permutable_cross_comparison1;
+
+  Indirect_cross_comparison2 -> Indirect_ordered_cross_comparison2;
+  Ordering2 -> Indirect_ordered_cross_comparison2;
+
+  Indirect_cross_comparison2 -> Indirect_permutable_cross_comparison2;
+  Permutable1 -> Indirect_permutable_cross_comparison2;
+
+  Output_iterator2 -> Indirect_copy2;
+
+  Indirect_copy2 -> Indirect_forward_copy2;
+
+  Indirect_forward_copy2 -> Indirect_bidirectional_copy2;
+
+  Indirect_bidirectional_copy2 -> Indirect_strong_bidirectional_copy2;
+  Indirect_range_swap2 -> Indirect_strong_bidirectional_copy2;
+
+  Indirect_copy2 -> Indirect_unique_copy2;
+
+  Indirect_copy2 -> Indirect_copy_query3;
+  Indirect_query2 -> Indirect_copy_query3;
+
+  Indirect_copy2 -> Indirect_copy_match3;
+  Indirect_match2 -> Indirect_copy_match3;
+
+  Indirect_copy2 -> Indirect_unique_copy3;
+
+  Movable1 -> Indirect_move2;
+  Output_iterator2 -> Indirect_move2;
+
+  Indirect_move2 -> Indirect_copy2 [style="dotted"];
+
+  Indirect_move2 -> Indirect_strong_bidirectional_move2;
+  Indirect_range_swap2 -> Indirect_strong_bidirectional_move2;
+
+  Indirect_range_swap2 -> Indirect_swap2;
+
+  Output_iterator2 -> Indirect_range_fill2;
+
+  Indirect_range_fill2 -> Indirect_increment_fill2;
+
+  Output_iterator2 -> Indirect_transform3;
+
+  Output_iterator2 -> Indirect_transform4;
+  Indirect_range_swap2 -> Indirect_transform4;
+
+  Output_iterator2 -> Indirect_generate2;
+
+  Indirect_generate2 -> Indirect_range_generate2;
+
+  Permutable1 -> Permutable_bidirectional1;
+
+  Permutable_bidirectional1 -> Permutable_random_access1;
+
+  Permutable_random_access1 -> Random_permutation2;
+
+  Permutable_random_access1 -> Uniform_random_permutation2;
+
+  Indirect_copy2 -> Indirect_partition_copy4;
+  Indirect_query2 -> Indirect_partition_copy4;
+
+  Permutable1 -> Sortable1;
+  Totally_ordered1 -> Sortable1;
+
+  Sortable1 -> Bidirectional_sortable1;
+
+  Bidirectional_sortable1 -> Random_access_sortable1;
+
+  Permutable1 -> Sortable2;
+  Ordering2 -> Sortable2;
+
+  Sortable2 -> Bidirectional_sortable2;
+
+  Bidirectional_sortable2 -> Random_access_sortable2;
+
+  Indirect_copy2 -> Partial_sortable2;
+  Random_access_sortable1 -> Partial_sortable2;
+
+  Indirect_copy2 -> Partial_sortable3;
+  Random_access_sortable2 -> Partial_sortable3;
+
+  Indirect_copy2 -> Mergable3;
+
+  Indirect_copy2 -> Mergable4;
+
+  Indirect_match3 -> Mergable4;
+
+}
