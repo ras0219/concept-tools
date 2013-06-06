@@ -1,29 +1,43 @@
+-- |This module defines data types and algorithms for abstractly
+-- manipulating concepts. The exported functions are meant to be used as
+-- 
+-- >>> putStrLn $ showConcepts $ simplify $ singleton $ ForwardIterator (Type "I")
+-- Valid ValueType<I>
+-- EqualityComparable I
+-- Semiregular I
+-- Regular I
+-- Readable I
+-- WeaklyIncrementable I
+-- Incrementable I
 module Concepts (Concept(..),
                  TypeExpr(Type),
-                 commonType, valueType, resultType,
+                 commonType, valueType, resultOf,
                  satisfies,
-                 simplify,
                  showConcepts,
+                 simplify,
                  simplify') where
 
 import Data.List hiding (union)
 import Data.Set (Set, singleton, union, isSubsetOf, fold,
                  empty, fromList, toList)
 
--- |Checks if the first concept set satisfies the constraints of the second.
--- Will fully simplify both arguments
+-- |Checks if the first concept set satisfies the requirements of the second.
+-- Will fully simplify both arguments.
+-- Ex.
+--
+-- >>> let i = Type "I"
+-- >>> satisfies (singleton $ ForwardIterator i) (singleton $ InputIterator i)
+-- True
 satisfies :: Set Concept -> Set Concept -> Bool
 
--- |Checks if the first concept set satisfies the constraints of the second.
--- Will fully simplify both arguments
+-- |Performs a fixed-point reduction on the set of concepts
 simplify :: Set Concept -> Set Concept
 
--- |Checks if the first concept set satisfies the constraints of the second.
--- Will fully simplify both arguments
+-- |A prettier display function for showing sets of concepts
 showConcepts :: Set Concept -> String
 
--- |Checks if the first concept set satisfies the constraints of the second.
--- Will fully simplify both arguments
+-- |Performs one reduction step upon a concept.
+-- This is the underlying operation used by 'simplify'.
 simplify' :: Concept -> [Concept]
 
 data TypeExpr = Type String
@@ -47,70 +61,103 @@ instance Show TypeExpr where
     show (Unary s t) = s ++ show t
     show (App s ts) = s ++ "(" ++ intercalate ", " (map show ts) ++ ")"
 
+-- |Performs the type function @CommonType\<T, U\>@
 commonType a b = t
     where (a',b') = if a < b then (a,b) else (b,a)
           t = if a == b
               then a
               else TypeFunc "CommonType" [a', b']
 
+-- |Performs the type function @ValueType\<T\>@
 valueType a = TypeFunc "ValueType" [a]
-resultType a bs = TypeFunc "ResultType" (a:bs)
+-- |Performs the type function @ResultOf\<F, Args...\>@
+resultOf a bs = TypeFunc "ResultOf" (a:bs)
+-- |Derives the constant reference from the argument @TypeFunc@
+-- Ex.
+-- @constRef (Type "T")@ represents @const T\&@
 constRef t = Const (Ref t)
 
-data Concept = Valid TypeExpr
-             ---- Language Concepts
-             | Same TypeExpr TypeExpr
-             | Derived TypeExpr TypeExpr
-             | Convertible TypeExpr TypeExpr
-             | Common TypeExpr TypeExpr
-             | Integral TypeExpr
-             | SignedIntegral TypeExpr
-             | UnsignedIntegral TypeExpr
-             ---- Foundational Concepts
-             | EqualityComparable TypeExpr
-             | EqualityComparable2 TypeExpr TypeExpr
-             | WeaklyOrdered TypeExpr
-             | WeaklyOrdered2 TypeExpr TypeExpr
-             | TotallyOrdered TypeExpr
-             | TotallyOrdered2 TypeExpr TypeExpr
-             | Semiregular TypeExpr
-             | Regular TypeExpr
-             ---- Function Concepts
-             | Function TypeExpr [TypeExpr]
-             | RegularFunction TypeExpr [TypeExpr]
+-- |This data type represents an abstract requirement.
+data Concept
+    -- |This concept is the most basic requirement: it's argument must be a valid type.
+    = Valid TypeExpr
+    ---- Language Concepts
+    -- |Same\<T, U\>
+    | Same TypeExpr TypeExpr
+    -- |Derived\<T, U\>
+    | Derived TypeExpr TypeExpr
+    -- |Convertible\<T, U\>
+    | Convertible TypeExpr TypeExpr
+    -- |Common\<T, U\>
+    | Common TypeExpr TypeExpr
+    -- |Integral\<T\>
+    | Integral TypeExpr
+    -- |SignedIntegral\<T\>
+    | SignedIntegral TypeExpr
+    -- |UnsignedIntegral\<T\>
+    | UnsignedIntegral TypeExpr
 
-             | Predicate TypeExpr [TypeExpr]
-             | Relation TypeExpr TypeExpr
-             | Relation2 TypeExpr TypeExpr TypeExpr
-
-             | UnaryOperation TypeExpr TypeExpr
-             | BinaryOperation TypeExpr TypeExpr
-             | BinaryOperation2 TypeExpr TypeExpr TypeExpr
-             ---- Iterator Concepts
-             -- Iterator Properties
-             | Readable TypeExpr
-             | MoveWritable TypeExpr TypeExpr
-             | Writable TypeExpr TypeExpr
-             | IndirectlyMovable TypeExpr TypeExpr
-             | IndirectlyCopyable TypeExpr TypeExpr
-             -- Incrementable Types
-             | WeaklyIncrementable TypeExpr
-             | Incrementable TypeExpr
-             | Decrementable TypeExpr -- my added
-             | Advancable TypeExpr -- my added
-             -- Iterator Abstractions
-             | WeakInputIterator TypeExpr
-             | InputIterator TypeExpr
-             | ForwardIterator TypeExpr
-             | BidirectionalIterator TypeExpr
-             | RandomAccessIterator TypeExpr
-             ---- Rearrangements
-             | Permutable TypeExpr
-             | Mergeable TypeExpr TypeExpr TypeExpr
-             | Mergeable2 TypeExpr TypeExpr TypeExpr TypeExpr
-             | Sortable TypeExpr
-             | Sortable2 TypeExpr TypeExpr
-               deriving (Show, Eq, Ord)
+    ---- Foundational Concepts
+    -- |EqualityComparable\<T\>
+    | EqualityComparable TypeExpr
+    -- |EqualityComparable\<T, U\>
+    | EqualityComparable2 TypeExpr TypeExpr
+    -- |WeaklyOrdered\<T\>
+    | WeaklyOrdered TypeExpr
+    -- |WeaklyOrdered\<T, U\>
+    | WeaklyOrdered2 TypeExpr TypeExpr
+    -- |TotallyOrdered\<T\>
+    | TotallyOrdered TypeExpr
+    -- |TotallyOrdered\<T, U\>
+    | TotallyOrdered2 TypeExpr TypeExpr
+    -- |Semiregular\<T\>
+    | Semiregular TypeExpr
+    -- |Regular\<T\>
+    | Regular TypeExpr
+    ---- Function Concepts
+    -- |Function\<F, Args...\>
+    | Function TypeExpr [TypeExpr]
+    -- |RegularFunction\<F, Args...\>
+    | RegularFunction TypeExpr [TypeExpr]
+      
+    -- |Predicate\<P, Args...\>
+    | Predicate TypeExpr [TypeExpr]
+    -- |Relation\<R, T\>
+    | Relation TypeExpr TypeExpr
+    -- |Relation\<R, T, U\>
+    | Relation2 TypeExpr TypeExpr TypeExpr
+      
+    -- |UnaryOperation\<Op, T\>
+    | UnaryOperation TypeExpr TypeExpr
+    -- |BinaryOperation\<Op, T\>
+    | BinaryOperation TypeExpr TypeExpr
+    -- |BinaryOperation\<Op, T, U\>
+    | BinaryOperation2 TypeExpr TypeExpr TypeExpr
+    ---- Iterator Concepts
+    -- Iterator Properties
+    | Readable TypeExpr
+    | MoveWritable TypeExpr TypeExpr
+    | Writable TypeExpr TypeExpr
+    | IndirectlyMovable TypeExpr TypeExpr
+    | IndirectlyCopyable TypeExpr TypeExpr
+    -- Incrementable Types
+    | WeaklyIncrementable TypeExpr
+    | Incrementable TypeExpr
+    | Decrementable TypeExpr -- my added
+    | Advancable TypeExpr -- my added
+    -- Iterator Abstractions
+    | WeakInputIterator TypeExpr
+    | InputIterator TypeExpr
+    | ForwardIterator TypeExpr
+    | BidirectionalIterator TypeExpr
+    | RandomAccessIterator TypeExpr
+    ---- Rearrangements
+    | Permutable TypeExpr
+    | Mergeable TypeExpr TypeExpr TypeExpr
+    | Mergeable2 TypeExpr TypeExpr TypeExpr TypeExpr
+    | Sortable TypeExpr
+    | Sortable2 TypeExpr TypeExpr
+      deriving (Show, Eq, Ord)
 
 bool = Type "bool"
 
@@ -137,25 +184,25 @@ simplify' (TotallyOrdered2 t u) = [ EqualityComparable2 t u
 simplify' (RegularFunction p l) = [ RegularFunction p l
                                  , Function p l ]
 simplify' (Predicate p l) = [ RegularFunction p l,
-                             Convertible (resultType p l) bool ]
+                             Convertible (resultOf p l) bool ]
 simplify' (Relation r t) = [ Predicate r [t, t] ]
 simplify' (Relation2 r t u) = [ Relation r t
                              , Relation r u
                              , Common t u
                              , Relation r (commonType t u)
-                             , Convertible (resultType r [t, u]) bool
-                             , Convertible (resultType r [u, t]) bool ]
+                             , Convertible (resultOf r [t, u]) bool
+                             , Convertible (resultOf r [u, t]) bool ]
 -- operations
 simplify' (UnaryOperation o t) = [ Function o [t]
-                                , Convertible (resultType o [t]) t ]
+                                , Convertible (resultOf o [t]) t ]
 simplify' (BinaryOperation o t) = [ Function o [t,t]
-                                 , Convertible (resultType o [t,t]) t ]
+                                 , Convertible (resultOf o [t,t]) t ]
 simplify' (BinaryOperation2 o t u) = [ BinaryOperation o t
                                     , BinaryOperation o u
                                     , Common t u
                                     , BinaryOperation o c
-                                    , Convertible (resultType o [t,u]) c
-                                    , Convertible (resultType o [u,t]) c ]
+                                    , Convertible (resultOf o [t,u]) c
+                                    , Convertible (resultOf o [u,t]) c ]
     where c = commonType t u
 -- iterators
 simplify' (Readable i) = [ Semiregular i
